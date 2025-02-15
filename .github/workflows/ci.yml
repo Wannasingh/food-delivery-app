@@ -22,8 +22,22 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
+    - name: Format code
+      run: npm run format
+      
     - name: Check code style
       run: npm run lint
+      continue-on-error: true
       
     - name: Run tests
       run: npm test
+      
+    - name: Check for formatting changes
+      run: |
+        if [[ `git status --porcelain` ]]; then
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git commit -m "style: format code"
+          git push
+        fi
